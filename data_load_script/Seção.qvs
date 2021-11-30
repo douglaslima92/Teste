@@ -1,0 +1,81 @@
+///$tab Seção
+Set dataManagerTables = '','Receita$','custoEdespesas$','PremissaOperacional$','IndicadoresOperacionais$','TarfiaContratual$';
+//This block renames script tables from non generated section which conflict with the names of managed tables
+
+For each name in $(dataManagerTables) 
+    Let index = 0;
+    Let currentName = name; 
+    Let tableNumber = TableNumber(name); 
+    Let matches = 0; 
+    Do while not IsNull(tableNumber) or (index > 0 and matches > 0)
+        index = index + 1; 
+        currentName = name & '-' & index; 
+        tableNumber = TableNumber(currentName) 
+        matches = Match('$(currentName)', $(dataManagerTables));
+    Loop 
+    If index > 0 then 
+            Rename Table '$(name)' to '$(currentName)'; 
+    EndIf; 
+Next; 
+Set dataManagerTables = ;
+
+
+Unqualify *;
+
+[Receita$]:
+LOAD
+	[Data] AS DATA,
+	[Empresa] AS EMPRESA,
+	[Receita Bruta] AS receitaBRUTA,
+    Serviço,
+	[Deduções] as DEDUCOES,
+	[Receita Líquida] as receitaLIQUIDA
+ FROM [lib://HP_EXTRATOR (win-jdd155ncfmm_administrador)/Dados\Benchmarking_city.xls]
+(biff, embedded labels, table is Receita$);
+
+[custoEdespesas$]:
+LOAD
+	[Data] AS DATA,
+	[Empresa] AS EMPRESA,
+	[Agrupamento]AS AGRUPAMENTO,
+    Serviço,
+	Upper([Despesa]) AS DESPESA,
+	[Valor Despesa] AS valorDESPESA
+ FROM [lib://HP_EXTRATOR (win-jdd155ncfmm_administrador)/Dados\Benchmarking_city.xls]
+(biff, embedded labels, table is custoEdespesas$);
+
+[PremissaOperacional$]:
+LOAD
+	[Data] AS DATA,
+	[Empresa] AS EMPRESA,
+	Upper([Premissa]) AS PREMISSA,
+    Serviço,
+	[Valor] AS valorPREMISSA
+ FROM [lib://HP_EXTRATOR (win-jdd155ncfmm_administrador)/Dados\Benchmarking_city.xls]
+(biff, embedded labels, table is PremissaOperacional$);
+
+[IndicadoresOperacionais$]:
+LOAD
+	[Data] AS DATA,
+	[Empresa] AS EMPRESA,
+    Serviço,
+	[Pass Absoluto] AS passageiroABSOLUTO,
+	[Km Oper] AS KM_OPERACIOAL,
+	[Km Total] AS KM_TOTAL,
+	[FU (Economico)] AS FU_ECONOMICO,
+	[Frota Patrimonial] AS frotaPATRIMONIAL,
+	[Frota Operacional] AS frotaOPERACIONAL,
+	[Perf. Km/L] AS [PERFORMANCE_KM/L],
+	[Preço / Diesel] AS PRECO_DIESEL,
+    [Litros] AS LITROS
+ FROM [lib://HP_EXTRATOR (win-jdd155ncfmm_administrador)/Dados\Benchmarking_city.xls]
+(biff, embedded labels, table is IndicadoresOperacionais$);
+
+[TarfiaContratual$]:
+LOAD
+	[Data] AS DATA,
+	[Empresa] AS EMPRESA,
+    Serviço,
+	[Tarifa Contratual] AS tarifaCONTRATUAL
+ FROM [lib://HP_EXTRATOR (win-jdd155ncfmm_administrador)/Dados\Benchmarking_city.xls]
+(biff, embedded labels, table is TarfiaContratual$);
