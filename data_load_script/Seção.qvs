@@ -1,7 +1,7 @@
 ///$tab Seção
 Set dataManagerTables = '','Receita$','custoEdespesas$','PremissaOperacional$','IndicadoresOperacionais$','TarfiaContratual$';
 //This block renames script tables from non generated section which conflict with the names of managed tables
-
+//teste
 For each name in $(dataManagerTables) 
     Let index = 0;
     Let currentName = name; 
